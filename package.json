@@ -1,0 +1,31 @@
+{
+  "name": "webpack-plugins",
+  "version": "1.0.0",
+  "description": "bfun webpack plugins",
+  "main": "index.js",
+  "scripts": {
+    "build:webpack4-common": "rollup -c --environment TARGET:webpack4-common"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bfunjs/webpack-plugins.git"
+  },
+  "keywords": [
+    "bfun",
+    "bfunjs",
+    "webpack",
+    "plugin"
+  ],
+  "author": "suibinc@qq.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bfunjs/webpack-plugins/issues"
+  },
+  "homepage": "https://github.com/bfunjs/webpack-plugins#readme",
+  "devDependencies": {
+    "@rollup/plugin-json": "^4.1.0",
+    "rollup": "^2.17.1",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0"
+  }
+}
