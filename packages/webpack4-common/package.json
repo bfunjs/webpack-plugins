@@ -1,6 +1,6 @@
 {
   "name": "@bfun/webpack4-plugin-common",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "@bfun/cli webpack4 plugin",
   "main": "dist/index.js",
   "scripts": {
@@ -20,6 +20,7 @@
   "dependencies": {
     "@babel/core": "7",
     "@babel/preset-env": "7",
+    "@bfun/webpack-configuration": "1",
     "babel-loader": "8",
     "clean-webpack-plugin": "3",
     "css-loader": "3",
