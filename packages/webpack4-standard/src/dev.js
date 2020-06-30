@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
+const chokidar = require('chokidar');
 
 const { autoDetectJsEntry } = global.common;
 
@@ -45,7 +46,7 @@ async function setupDevServer({ host, port, wConfig }) {
 }
 
 export default async function (ctx) {
-    const { host, port, solution } = ctx;
+    const { host, port, solution, filepath } = ctx;
     const { webpack } = solution || {};
 
     const wConfig = [];
@@ -56,4 +57,6 @@ export default async function (ctx) {
     }
 
     await setupDevServer({ host, port, wConfig });
+
+    if (filepath) chokidar.watch(ctx.filepath).on('change', () => process.send('restart'));
 }

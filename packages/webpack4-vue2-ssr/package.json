@@ -1,7 +1,7 @@
 {
-  "name": "@bfun/solution-webpack4-vue2",
+  "name": "@bfun/solution-webpack4-vue2-ssr",
   "version": "0.0.1",
-  "description": "@bfun/cli solution webpack4 & vue2",
+  "description": "@bfun/cli solution webpack4 & vue2 & ssr",
   "main": "dist/index.js",
   "scripts": {
     "release": "npm publish --access=public",

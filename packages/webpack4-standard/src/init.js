@@ -7,11 +7,13 @@ import template from './rules/template';
 
 const TerserWebpackPlugin = require('terser-webpack-plugin');
 const OptimizeCssAssets = require('optimize-css-assets-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const { WebpackConfiguration } = require('@bfun/webpack-configuration');
 
 export default async function (ctx, next) {
     const { options = {} } = ctx.solution || {};
+    const { clean } = options;
     const webpack = new WebpackConfiguration();
 
     webpack.resolve.extensions.push('.js', '.jsx', '.json');
@@ -32,6 +34,15 @@ export default async function (ctx, next) {
     await fonts(webpack, options);
     await less(webpack, options);
     await template(webpack, options);
+    if (clean !== false) {
+        let defaultOptions = Object.assign({
+            verbose: false,
+            dry: false,
+        }, typeof clean === 'object' ? clean : {});
+        webpack.plugins.push(
+            new CleanWebpackPlugin(defaultOptions),
+        )
+    }
 
     if (!ctx.solution.webpack) ctx.solution.webpack = [];
     ctx.solution.webpack.push(webpack);
