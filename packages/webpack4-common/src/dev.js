@@ -2,6 +2,8 @@ const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
+const { autoDetectJsEntry } = global.common;
+
 async function setupDevServer({ host, port, wConfig }) {
     const devServerEntry = [
         `webpack-dev-server/client?http://${host}:${port}`,
@@ -46,5 +48,12 @@ export default async function (ctx) {
     const { host, port, solution } = ctx;
     const { webpack } = solution || {};
 
-    await setupDevServer({ host, port, wConfig: webpack.map(v => v.toConfig()) });
+    const wConfig = [];
+    for (let i = 0, l = webpack.length; i < l; i++) {
+        const config = await webpack[i].toConfig();
+        config.entry = autoDetectJsEntry(config.entry);
+        wConfig.push(config);
+    }
+
+    await setupDevServer({ host, port, wConfig });
 }

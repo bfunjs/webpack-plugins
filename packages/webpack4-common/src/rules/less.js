@@ -3,7 +3,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const name = 'less'
 
 export default async function (webpack, { [name]: options }) {
-    const rule = webpack.module.rules.createIfNotExists('less');
+    const rule = webpack.module.rules.createIfNotExists(name);
     if (!rule.test) rule.test = /\.less$/;
 
     rule.use.push({
@@ -11,8 +11,8 @@ export default async function (webpack, { [name]: options }) {
         options: {
             hmr: process.env.NODE_ENV !== 'production',
         },
-    });
-    rule.use.push({ loader: 'css-loader' });
+    }, 'MiniCssExtractPlugin');
+    rule.use.push({ loader: 'css-loader' }, 'CssLoader');
     // px2rem(rule.use, allOptions);
-    rule.use.push({ loader: 'less-loader' });
+    rule.use.push({ loader: 'less-loader' }, 'LessLoader');
 }

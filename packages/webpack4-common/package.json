@@ -1,6 +1,6 @@
 {
   "name": "@bfun/webpack4-plugin-common",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "@bfun/cli webpack4 plugin",
   "main": "dist/index.js",
   "scripts": {
@@ -41,6 +41,7 @@
     "webpack-node-externals": "1"
   },
   "peerDependencies": {
+    "@bfun/webpack-configuration": "1",
     "webpack": "4"
   }
 }

@@ -4,7 +4,8 @@
   "description": "bfun webpack plugins",
   "main": "index.js",
   "scripts": {
-    "build:webpack4-common": "rollup -c --environment TARGET:webpack4-common"
+    "build:webpack4-common": "rollup -c --environment TARGET:webpack4-common",
+    "build:webpack4-vue2": "rollup -c --environment TARGET:webpack4-vue2"
   },
   "repository": {
     "type": "git",

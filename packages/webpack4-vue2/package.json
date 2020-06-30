@@ -1,8 +1,8 @@
 {
-  "name": "@bfun/webpack4-plugin-common",
-  "version": "1.0.0",
-  "description": "bfun webpack4 plugin",
-  "main": "index.js",
+  "name": "@bfun/webpack4-vue2",
+  "version": "0.0.1",
+  "description": "@bfun/cli webpack4 & vue2",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/bfunjs/webpack-plugins/issues"
   },
-  "homepage": "https://github.com/bfunjs/webpack-plugins#readme"
+  "homepage": "https://github.com/bfunjs/webpack-plugins#readme",
+  "dependencies": {
+    "vue": "2"
+  }
 }

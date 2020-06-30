@@ -10,13 +10,10 @@ export default async function (webpack, { [name]: options }) {
         defaultOptions = Object.assign(defaultOptions, options);
     }
 
-    webpack.module.rules.push({
-        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        use: [
-            {
-                loader: 'url-loader',
-                options: defaultOptions,
-            },
-        ],
-    }, name);
+    const rule = webpack.module.rules.createIfNotExists(name);
+    rule.test = /\.(woff2?|eot|ttf|otf)(\?.*)?$/;
+    rule.use.push({
+        loader: 'url-loader',
+        options: defaultOptions,
+    }, name)
 }

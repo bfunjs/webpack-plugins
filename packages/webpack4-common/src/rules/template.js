@@ -13,14 +13,15 @@ export default async function (webpack, { [name]: options }) {
         minify: {
             removeComments: false,
             collapseWhitespace: true,
-            removeAttributeQutes: true
-        }
+            removeAttributeQutes: true,
+        },
     };
     if (typeof options === 'object') {
         defaultOptions = Object.assign(defaultOptions, options);
     }
 
     webpack.plugins.push(
-        new HtmlWebpackPlugin(defaultOptions)
+        new HtmlWebpackPlugin(defaultOptions),
+        name,
     )
 }

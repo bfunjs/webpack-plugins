@@ -10,13 +10,10 @@ export default async function (webpack, { [name]: options }) {
         defaultOptions = Object.assign(defaultOptions, options);
     }
 
-    webpack.module.rules.push({
-        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-        use: [
-            {
-                loader: 'url-loader',
-                options: defaultOptions,
-            },
-        ],
-    }, name);
+    const rule = webpack.module.rules.createIfNotExists(name);
+    rule.test = /\.(png|jpe?g|gif|svg)(\?.*)?$/;
+    rule.use.push({
+        loader: 'url-loader',
+        options: defaultOptions,
+    }, name)
 }
