@@ -1,10 +1,10 @@
 {
   "name": "webpack-plugins",
   "version": "1.0.0",
-  "description": "bfun webpack plugins",
+  "description": "@bfun/cli webpack plugins",
   "main": "index.js",
   "scripts": {
-    "build:webpack4-common": "rollup -c --environment TARGET:webpack4-common",
+    "build:webpack4-standard": "rollup -c --environment TARGET:webpack4-standard",
     "build:webpack4-vue2": "rollup -c --environment TARGET:webpack4-vue2"
   },
   "repository": {

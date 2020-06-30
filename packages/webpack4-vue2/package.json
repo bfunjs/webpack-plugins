@@ -1,10 +1,11 @@
 {
-  "name": "@bfun/webpack4-vue2",
+  "name": "@bfun/solution-webpack4-vue2",
   "version": "0.0.1",
-  "description": "@bfun/cli webpack4 & vue2",
+  "description": "@bfun/cli solution webpack4 & vue2",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "release": "npm publish --access=public",
+    "beta": "npm publish --access=public --tag=beta"
   },
   "repository": {
     "type": "git",

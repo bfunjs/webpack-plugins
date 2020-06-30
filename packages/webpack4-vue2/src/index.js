@@ -1,6 +1,6 @@
 import init from './init';
 
-const extensions = ['@bfun/webpack4-plugin-common'];
+const extensions = ['@bfun/solution-webpack4-standard'];
 
 export {
     extensions,
