@@ -41,6 +41,7 @@ export default async function (ctx, next) {
         }, typeof clean === 'object' ? clean : {});
         webpack.plugins.push(
             new CleanWebpackPlugin(defaultOptions),
+            'clean',
         )
     }
 

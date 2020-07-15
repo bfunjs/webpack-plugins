@@ -42,7 +42,7 @@ async function setupSSRServer({ host, port, wConfig }) {
         });
     });
 
-    const [clientConfig, serverConfig] = wConfig;
+    const [ clientConfig, serverConfig ] = wConfig;
     const baseDir = clientConfig.output.path;
     const ssrData = {
         template: '',
@@ -51,6 +51,9 @@ async function setupSSRServer({ host, port, wConfig }) {
         context: {},
         runInNewContext: 'once',
     };
+
+    console.log(clientConfig)
+    console.log(serverConfig)
 
     const clientCompiler = webpack(clientConfig);
     clientCompiler.outputFileSystem = memFs;
@@ -135,7 +138,7 @@ export default async function (ctx) {
         wConfig.push(config);
     }
 
-    await setupSSRServer({ host, port, wConfig });
+    await setupSSRServer({ host, port, wConfig, solution });
 
     if (filepath) chokidar.watch(filepath).on('change', () => process.send('restart'));
 }
