@@ -5,7 +5,7 @@ const chokidar = require('chokidar');
 
 const { autoDetectJsEntry } = global.common;
 
-async function setupDevServer({ host, port, wConfig }) {
+async function setupDevServer({ host, port, wConfig, devServer }) {
     const devServerEntry = [
         `webpack-dev-server/client?http://${host}:${port}`,
         'webpack/hot/dev-server',
@@ -40,14 +40,17 @@ async function setupDevServer({ host, port, wConfig }) {
         quiet: true,
         overlay: false,
         clientLogLevel: 'warning', // "none" | "info" | "warning" | "error"
+        ...(wConfig[0].devServer || {}),
+        ...devServer,
     };
     const server = new WebpackDevServer(compiler, devServerOption);
     server.listen(port, '0.0.0.0');
 }
 
-export default async function (ctx) {
+export default async function (ctx, next, solutionOptions) {
     const { host, port, solution, filepath } = ctx;
-    const { webpack } = solution || {};
+    const { webpack, options } = solution || {};
+    const { devServer = {} } = options;
 
     const wConfig = [];
     for (let i = 0, l = webpack.length; i < l; i++) {
@@ -56,7 +59,7 @@ export default async function (ctx) {
         wConfig.push(config);
     }
 
-    await setupDevServer({ host, port, wConfig });
+    await setupDevServer({ host, port, wConfig, devServer });
 
-    if (filepath) chokidar.watch(ctx.filepath).on('change', () => process.send('restart'));
+    if (filepath) chokidar.watch(filepath).on('change', () => process.send('restart'));
 }

@@ -13,7 +13,7 @@ const { WebpackConfiguration } = require('@bfun/webpack-configuration');
 
 export default async function (ctx, next) {
     const { options = {} } = ctx.solution || {};
-    const { clean } = options;
+    const { clean, wConfig } = options;
     const webpack = new WebpackConfiguration();
 
     webpack.resolve.extensions.push('.js', '.jsx', '.json');
@@ -44,6 +44,7 @@ export default async function (ctx, next) {
         )
     }
 
+    webpack.merge(wConfig);
     if (!ctx.solution.webpack) ctx.solution.webpack = [];
     ctx.solution.webpack.push(webpack);
 

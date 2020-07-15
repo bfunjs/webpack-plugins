@@ -1,6 +1,6 @@
 {
   "name": "@bfun/solution-webpack4-standard",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "description": "@bfun/cli solution webpack4 standard",
   "main": "dist/index.js",
   "scripts": {
@@ -37,7 +37,6 @@
     "url-loader": "2",
     "webpack": "4",
     "webpack-dev-server": "^3.11.0",
-    "webpack-merge": "4",
     "webpack-node-externals": "1"
   },
   "peerDependencies": {

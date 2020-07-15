@@ -15,6 +15,7 @@ export default async function (webpack, { [name]: options }) {
             collapseWhitespace: true,
             removeAttributeQutes: true,
         },
+        chunksSortMode: 'none',
     };
     if (typeof options === 'object') {
         defaultOptions = Object.assign(defaultOptions, options);
