@@ -11,9 +11,10 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const { WebpackConfiguration } = require('@bfun/webpack-configuration');
 
-export default async function (ctx, next) {
+export default async function (ctx, next, solutionOptions, extraOptions) {
     const { options = {} } = ctx.solution || {};
-    const { clean, wConfig } = options;
+    const { clean, wConfig, ssr } = options;
+    const { buildTarget } = extraOptions || {};
     const webpack = new WebpackConfiguration();
 
     webpack.resolve.extensions.push('.js', '.jsx', '.json');
@@ -33,7 +34,9 @@ export default async function (ctx, next) {
     await style(webpack, options);
     await fonts(webpack, options);
     await less(webpack, options);
-    await template(webpack, options);
+    if (!ssr || buildTarget !== 'server') {
+        await template(webpack, options);
+    }
     if (clean !== false) {
         let defaultOptions = Object.assign({
             verbose: false,

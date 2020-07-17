@@ -1,6 +1,6 @@
 const path = require('path');
 const Koa = require('koa');
-const Router = require('koa-router');
+const Router = require('@koa/router');
 const koaWebpack = require('koa-webpack');
 const chokidar = require('chokidar');
 const webpack = require('webpack');
@@ -43,7 +43,7 @@ async function setupSSRServer({ host, port, wConfig }) {
     });
 
     const [ clientConfig, serverConfig ] = wConfig;
-    const baseDir = clientConfig.output.path;
+    const baseDir = clientConfig.output.path || path.join(process.cwd(), 'dist');
     const ssrData = {
         template: '',
         bundle: '',
@@ -51,9 +51,6 @@ async function setupSSRServer({ host, port, wConfig }) {
         context: {},
         runInNewContext: 'once',
     };
-
-    console.log(clientConfig)
-    console.log(serverConfig)
 
     const clientCompiler = webpack(clientConfig);
     clientCompiler.outputFileSystem = memFs;
@@ -66,7 +63,10 @@ async function setupSSRServer({ host, port, wConfig }) {
     }, (err, stats) => {
         if (err) throw err;
         stats = stats.toJson();
-        if (stats.errors.length) return;
+        if (stats.errors.length) {
+            console.log(stats.errors);
+            return;
+        }
 
         const serverFile = path.join(serverConfig.output.path, 'ssr-server.json');
         ssrData.bundle = memFs.readFileSync(serverFile).toString(CHARSET);
@@ -81,25 +81,27 @@ async function setupSSRServer({ host, port, wConfig }) {
         },
     });
 
-    route.get('*', async (ctx, next) => {
+    route.get('/', async (ctx, next) => {
         const { req } = ctx;
+        const { fileSystem } = clientMiddleware.devMiddleware;
         let filepath = ctx.path || '';
 
+        console.log('get', req.url);
         ssrData.context.url = req.url;
         try {
             if (filepath.length < 1) {
                 filepath = '/';
             }
             if (filepath.lastIndexOf('.') < 0) {
-                filepath = `${filepath}${filepath[filepath.length - 1] === '/' ? '' : '/'}index.template.html`;
+                filepath = `${filepath}${filepath[filepath.length - 1] === '/' ? '' : '/'}index.html`;
             }
             if (filepath.lastIndexOf('.html') > 0) {
                 ctx.response.type = 'html';
                 filepath = path.join(baseDir, filepath);
 
                 const clientFile = path.join(baseDir, 'ssr-client.json');
-                ssrData.manifest = clientMiddleware.devMiddleware.fileSystem.readFileSync(clientFile).toString(CHARSET);
-                ssrData.template = clientMiddleware.devMiddleware.fileSystem.readFileSync(filepath).toString(CHARSET);
+                ssrData.manifest = fileSystem.readFileSync(clientFile).toString(CHARSET);
+                ssrData.template = fileSystem.readFileSync(filepath).toString(CHARSET);
 
                 ctx.body = await vueSSR(ssrData);
                 console.log('get', ctx.path, '->', filepath);
@@ -108,9 +110,9 @@ async function setupSSRServer({ host, port, wConfig }) {
             }
         } catch (e) {
             if (filepath.lastIndexOf('.html') > 0) {
-                filepath = path.join(baseDir, 'index.template.html');
+                filepath = path.join(baseDir, 'index.html');
                 console.log('redirect', ctx.path, '->', filepath);
-                ssrData.template = clientMiddleware.devMiddleware.fileSystem.readFileSync(filepath).toString();
+                ssrData.template = fileSystem.readFileSync(filepath).toString();
                 ctx.body = await vueSSR(ssrData);
             } else {
                 ctx.status = 404;
