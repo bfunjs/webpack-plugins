@@ -5,52 +5,62 @@ import style from './rules/style';
 import less from './rules/less';
 import template from './rules/template';
 
+const { autoDetectJsEntry } = global.common;
+const WebpackChain = require('webpack-chain');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
 const OptimizeCssAssets = require('optimize-css-assets-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const rules = { assets, babel, fonts, style, less, template };
 
-const { WebpackConfiguration } = require('@bfun/webpack-configuration');
+export async function createWebpackConfig(options, filters = []) {
+    const wConfig = new WebpackChain();
 
-export default async function (ctx, next, solutionOptions, extraOptions) {
-    const { options = {} } = ctx.solution || {};
-    const { clean, wConfig, ssr } = options;
-    const { buildTarget } = extraOptions || {};
-    const webpack = new WebpackConfiguration();
-
-    webpack.resolve.extensions.push('.js', '.jsx', '.json');
     if (process.env.NODE_ENV === 'production') {
-        webpack.production();
-        webpack.optimization.minimize = true;
-        webpack.optimization.minimizer = [
-            new TerserWebpackPlugin(),
-            new OptimizeCssAssets(),
-        ];
+        wConfig.mode('production');
+        wConfig.optimization.minimize(true)
+        wConfig.optimization.minimizer('TerserWebpackPlugin').use(TerserWebpackPlugin);
+        wConfig.optimization.minimizer('OptimizeCssAssets').use(OptimizeCssAssets);
     } else {
-        webpack.development();
+        wConfig.mode('development');
+        wConfig.optimization.minimize(false);
     }
 
-    await babel(webpack, options);
-    await assets(webpack, options);
-    await style(webpack, options);
-    await fonts(webpack, options);
-    await less(webpack, options);
-    if (!ssr || buildTarget !== 'server') {
-        await template(webpack, options);
+    wConfig.resolve.extensions.add('.js').add('.json');
+
+    const tmp = Object.keys(rules);
+    for (let i = 0, l = tmp.length; i < l; i++) {
+        const key = tmp[i];
+        if (filters.indexOf(key) > -1) continue;
+        await rules[key](wConfig, options);
     }
+
+    return wConfig;
+}
+
+export async function init(ctx, next) {
+    const { options = {} } = ctx.solution || {};
+    const { clean, wConfig } = options;
+    const webpack = await createWebpackConfig(options);
+
     if (clean !== false) {
         let defaultOptions = Object.assign({
             verbose: false,
             dry: false,
         }, typeof clean === 'object' ? clean : {});
-        webpack.plugins.push(
-            new CleanWebpackPlugin(defaultOptions),
-            'clean',
-        )
+        webpack.plugin('clean').use(CleanWebpackPlugin, [ defaultOptions ])
     }
+    if (wConfig) webpack.merge(wConfig);
 
-    webpack.merge(wConfig);
     if (!ctx.solution.webpack) ctx.solution.webpack = [];
     ctx.solution.webpack.push(webpack);
 
     await next();
+
+    const list = [];
+    for (let i = 0, l = ctx.solution.webpack.length; i < l; i++) {
+        const config = await ctx.solution.webpack[i].toConfig();
+        config.entry = autoDetectJsEntry(config.entry);
+        list.push(config);
+    }
+    ctx.solution.webpack = list;
 }

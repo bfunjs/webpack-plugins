@@ -83,12 +83,10 @@ export default async function (ctx, next, solutionOptions) {
     if (ssr) {
         initClientConfig(clientConfig, options);
         initServerConfig(serverConfig, options);
+        ctx.solution.skip.push('@bfun/solution-webpack4-standard:dev');
+    } else {
+        initCommonConfig(clientConfig, options);
     }
 
     await next();
-
-    if (ssr) {
-        ctx.solution.skip.push('@bfun/solution-webpack4-standard:dev');
-        console.log('start ssr dev server');
-    }
 }

@@ -1,6 +1,6 @@
 const webpackBuilder = require('webpack');
 
-const { cleanDir, autoDetectJsEntry, logger } = global.common;
+const { cleanDir, logger } = global.common;
 
 function buildCallback(err, stats) {
     if (err) {
@@ -20,22 +20,15 @@ function buildCallback(err, stats) {
     }));
 }
 
-export default async function (ctx, next) {
+export async function build(ctx, next) {
     const { webpack, bConfig = {} } = ctx.solution || {};
     const { clean } = bConfig;
 
     if (clean && typeof clean === 'string') {
         await cleanDir(clean);
     }
-
-    const wConfig = [];
-    for (let i = 0, l = webpack.length; i < l; i++) {
-        const config = await webpack[i].toConfig();
-        config.entry = autoDetectJsEntry(config.entry);
-        wConfig.push(config);
-    }
-    const compiler = webpackBuilder(wConfig);
-    return new Promise((resolve) => {
+    const compiler = webpackBuilder(webpack);
+    await new Promise((resolve) => {
         compiler.run(async (err, stats) => {
             buildCallback(err, stats);
             if (stats.hasErrors()) process.exit(1);

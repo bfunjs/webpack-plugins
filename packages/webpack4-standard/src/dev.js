@@ -3,8 +3,6 @@ const WebpackDevServer = require('webpack-dev-server');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const chokidar = require('chokidar');
 
-const { autoDetectJsEntry } = global.common;
-
 async function setupDevServer({ host, port, wConfig, devServer }) {
     const devServerEntry = [
         `webpack-dev-server/client?http://${host}:${port}`,
@@ -47,19 +45,12 @@ async function setupDevServer({ host, port, wConfig, devServer }) {
     server.listen(port, '0.0.0.0');
 }
 
-export default async function (ctx, next, solutionOptions) {
+export async function dev(ctx, next, solutionOptions) {
     const { host, port, solution, filepath } = ctx;
     const { webpack, options } = solution || {};
     const { devServer = {} } = options;
 
-    const wConfig = [];
-    for (let i = 0, l = webpack.length; i < l; i++) {
-        const config = await webpack[i].toConfig();
-        config.entry = autoDetectJsEntry(config.entry);
-        wConfig.push(config);
-    }
-
-    await setupDevServer({ host, port, wConfig, devServer });
+    await setupDevServer({ host, port, wConfig: webpack, devServer });
 
     if (filepath) chokidar.watch(filepath).on('change', () => process.send('restart'));
 }

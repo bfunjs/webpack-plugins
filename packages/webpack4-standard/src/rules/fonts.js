@@ -1,6 +1,6 @@
 const name = 'fonts';
 
-export default async function (webpack, { [name]: options }) {
+export default async function (wConfig, { [name]: options }) {
     let defaultOptions = {
         fallback: 'file-loader',
         limit: 8192,
@@ -10,10 +10,6 @@ export default async function (webpack, { [name]: options }) {
         defaultOptions = Object.assign(defaultOptions, options);
     }
 
-    const rule = webpack.module.rules.createIfNotExists(name);
-    rule.test = /\.(woff2?|eot|ttf|otf)(\?.*)?$/;
-    rule.use.push({
-        loader: 'url-loader',
-        options: defaultOptions,
-    }, name)
+    const rule = wConfig.module.rule(name).test(/\.(woff2?|eot|ttf|otf)(\?.*)?$/);
+    rule.use('url-loader').loader('url-loader').options(defaultOptions);
 }
