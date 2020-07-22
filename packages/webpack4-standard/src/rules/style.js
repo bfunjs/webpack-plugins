@@ -2,13 +2,13 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const name = 'style'
 
-export default async function (wConfig, { [name]: options }) {
+export default async function (chain, { [name]: options }) {
     let defaultOptions = { filename: 'css/[name].css' };
     if (typeof options === 'object') {
         defaultOptions = Object.assign(defaultOptions, options);
     }
 
-    const rule = wConfig.module.rule(name).test(/\.css$/);
+    const rule = chain.module.rule(name).test(/\.css$/);
     rule.use('MiniCssExtractPlugin')
         .loader(MiniCssExtractPlugin.loader)
         .options({
@@ -17,5 +17,5 @@ export default async function (wConfig, { [name]: options }) {
     rule.use('css-loader').loader('css-loader');
 
     // px2rem(rule.use, allOptions);
-    wConfig.plugin('MiniCssExtractPlugin').use(MiniCssExtractPlugin, [ defaultOptions ]);
+    chain.plugin('MiniCssExtractPlugin').use(MiniCssExtractPlugin, [ defaultOptions ]);
 }

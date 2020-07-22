@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const name = 'template'
 
-export default async function (wConfig, { [name]: options }) {
+export default async function (chain, { [name]: options }) {
     const defaultTmplDir = global.configDir || process.cwd();
     const filename = (typeof options === 'string') ? options : 'index.html';
     let defaultOptions = {
@@ -21,5 +21,5 @@ export default async function (wConfig, { [name]: options }) {
         defaultOptions = Object.assign(defaultOptions, options);
     }
 
-    wConfig.plugin(name).use(HtmlWebpackPlugin, [ defaultOptions ]);
+    chain.plugin(name).use(HtmlWebpackPlugin, [ defaultOptions ]);
 }

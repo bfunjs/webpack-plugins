@@ -1,6 +1,6 @@
 const name = 'fonts';
 
-export default async function (wConfig, { [name]: options }) {
+export default async function (chain, { [name]: options }) {
     let defaultOptions = {
         fallback: 'file-loader',
         limit: 8192,
@@ -10,6 +10,6 @@ export default async function (wConfig, { [name]: options }) {
         defaultOptions = Object.assign(defaultOptions, options);
     }
 
-    const rule = wConfig.module.rule(name).test(/\.(woff2?|eot|ttf|otf)(\?.*)?$/);
+    const rule = chain.module.rule(name).test(/\.(woff2?|eot|ttf|otf)(\?.*)?$/);
     rule.use('url-loader').loader('url-loader').options(defaultOptions);
 }

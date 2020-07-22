@@ -2,8 +2,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const name = 'less'
 
-export default async function (wConfig, { [name]: options }) {
-    const rule = wConfig.module.rule(name).test(/\.less$/);
+export default async function (chain, { [name]: options }) {
+    const rule = chain.module.rule(name).test(/\.less$/);
     rule.use('MiniCssExtractPlugin')
         .loader(MiniCssExtractPlugin.loader)
         .options({

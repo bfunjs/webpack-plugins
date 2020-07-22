@@ -1,6 +1,6 @@
 const name = 'assets';
 
-export default async function (wConfig, { [name]: options }) {
+export default async function (chain, { [name]: options }) {
     let defaultOptions = {
         fallback: 'file-loader',
         limit: 8192,
@@ -10,7 +10,7 @@ export default async function (wConfig, { [name]: options }) {
         defaultOptions = Object.assign(defaultOptions, options);
     }
 
-    wConfig.module.rule(name)
+    chain.module.rule(name)
         .test(/\.(png|jpe?g|gif|svg)(\?.*)?$/)
         .use('url-loader')
         .loader('url-loader')
