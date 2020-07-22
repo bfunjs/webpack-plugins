@@ -65,12 +65,13 @@ export async function init(ctx, next) {
     const cList = [];
     for (let i = 0, l = ctx.solution.webpack.length; i < l; i++) {
         const wChain = ctx.solution.webpack[i];
-        let status = false;
+        let status = true;
         if (typeof created === 'function') status = await created(wChain, i);
         if (status === false) continue;
         const config = await wChain.toConfig();
         config.entry = autoDetectJsEntry(config.entry);
         cList.push(config);
     }
+    if (cList.length < 1) console.warn('webpack config is empty');
     ctx.solution.webpack = cList;
 }
