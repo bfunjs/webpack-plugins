@@ -37,12 +37,13 @@ export async function createWebpackConfig(options, extra = {}) {
     }
 
     chain.output.path(path.join(process.cwd(), 'dist')).filename('[name].js');
+    chain.output.publicPath('/');
     return chain;
 }
 
 export async function init(ctx, next) {
     const { options = {} } = ctx.solution || {};
-    const { clean, wConfig } = options;
+    const { clean, wConfig, created } = options;
     const chain = await createWebpackConfig(options);
 
     if (clean !== false) {
@@ -52,6 +53,8 @@ export async function init(ctx, next) {
         }, typeof clean === 'object' ? clean : {});
         chain.plugin('clean').use(CleanWebpackPlugin, [ defaultOptions ]);
     }
+    // 我们希望wConfig只影响第一个webpack配置，防止后面的自定义配置受到污染
+    // 如果希望影响每一个webpack配置，可以在created钩子中配置
     if (wConfig) chain.merge(wConfig);
 
     if (!ctx.solution.webpack) ctx.solution.webpack = [];
@@ -61,7 +64,11 @@ export async function init(ctx, next) {
 
     const cList = [];
     for (let i = 0, l = ctx.solution.webpack.length; i < l; i++) {
-        const config = await ctx.solution.webpack[i].toConfig();
+        const wChain = ctx.solution.webpack[i];
+        let status = false;
+        if (typeof created === 'function') status = await created(wChain, i);
+        if (status === false) continue;
+        const config = await wChain.toConfig();
         config.entry = autoDetectJsEntry(config.entry);
         cList.push(config);
     }

@@ -1,5 +1,5 @@
 const path = require('path');
-const { init } = require('@bfun/solution-webpack4-standard');
+const { createWebpackConfig } = require('@bfun/solution-webpack4-standard');
 const nodeExternals = require('webpack-node-externals');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const VueSSRClientPlugin = require('vue-server-renderer/client-plugin');
@@ -8,8 +8,8 @@ const VueSSRServerPlugin = require('vue-server-renderer/server-plugin');
 const { autoDetectJsEntry } = global.common;
 const name = 'vue';
 
-function initCommonConfig(config, options) {
-    const { vue2, style, less, client = {} } = options;
+function initCommonConfig(chain, options) {
+    const { vue2, style, less } = options;
 
     let defaultOptions = {
         loaders: {
@@ -27,57 +27,48 @@ function initCommonConfig(config, options) {
     if (style) defaultOptions.loaders.css.push('css-loader');
     if (less) defaultOptions.loaders.less = [ 'vue-style-loader', 'less-loader' ];
 
-    config.resolve.extensions.push('.vue');
+    chain.resolve.extensions.add('.vue');
+    chain.output.publicPath('/');
 
-    const rule = config.module.rules.createIfNotExists(name);
-    rule.test = /\.vue$/;
-    rule.use.push({
-        loader: 'vue-loader',
-        options: defaultOptions,
-    }, name);
-    config.plugins.push(
-        new VueLoaderPlugin(),
-        'vue-loader',
-    );
-    config.output.path = path.join(process.cwd(), 'dist');
+    const rule = chain.module.rule(name).test(/\.vue$/);
+    rule.use(name).loader('vue-loader').options(defaultOptions);
+    chain.plugin('vue-loader').use(VueLoaderPlugin);
 }
 
-function initClientConfig(clientConfig, options) {
+function initClientConfig(chain, options) {
     const { client = {} } = options;
     const { entry = 'entry-client.js', filename = 'ssr-client.json' } = client || {};
-    clientConfig.plugins.push(
-        new VueSSRClientPlugin(Object.assign({ filename })),
-        'ssr-client',
-    )
-    clientConfig.addEntry(autoDetectJsEntry(entry));
+    const clientEntry = autoDetectJsEntry(entry);
+    Object.keys(clientEntry).map(key => chain.entry(key).add(clientEntry[key]));
 
-    initCommonConfig(clientConfig, options);
-    clientConfig.plugins.remove('clean');
+    initCommonConfig(chain, options);
+    chain.plugin('ssr-client').use(VueSSRClientPlugin, [ { filename } ])
+    chain.plugins.delete('clean');
 }
 
 
-function initServerConfig(serverConfig, options) {
+function initServerConfig(chain, options) {
     const { server = {} } = options;
     const { entry = 'entry-server.js', filename = 'ssr-server.json' } = server || {};
-    serverConfig.plugins.push(
-        new VueSSRServerPlugin(Object.assign({ filename })),
-        'ssr-server',
-    )
-    serverConfig.addEntry(autoDetectJsEntry(entry));
-    initCommonConfig(serverConfig, options);
-    serverConfig.target = 'node';
-    serverConfig.output.path = path.join(process.cwd(), 'dist');
-    serverConfig.output.filename = 'server-bundle.js';
-    serverConfig.output.libraryTarget = 'commonjs2';
-    serverConfig.externals = nodeExternals({ whitelist: /\.css$/ });
-    serverConfig.plugins.remove('template');
-    serverConfig.plugins.remove('clean');
+    const serverEntry = autoDetectJsEntry(entry);
+    Object.keys(serverEntry).map(key => chain.entry(key).add(serverEntry[key]));
+
+    initCommonConfig(chain, options);
+
+    chain.plugin('ssr-server').use(VueSSRServerPlugin, [ { filename } ])
+    chain.target('node');
+    chain.output.filename('server-bundle.js');
+    chain.output.libraryTarget('commonjs2');
+    chain.externals(nodeExternals({ whitelist: /\.css$/ }));
+
+    chain.plugins.delete('template');
+    chain.plugins.delete('clean');
 }
 
-export default async function (ctx, next, solutionOptions) {
+export async function init(ctx, next, solutionOptions) {
     const { webpack, options = {} } = ctx.solution || {};
     const { ssr = false } = solutionOptions;
-    if (ssr) await init(ctx, v => v, solutionOptions, { buildTarget: 'server' });
+    if (ssr && webpack.length < 2) webpack.push(await createWebpackConfig(options, [ 'template' ]))
 
     const [ clientConfig, serverConfig ] = webpack;
     if (ssr) {

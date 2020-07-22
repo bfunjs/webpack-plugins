@@ -6,7 +6,6 @@ const chokidar = require('chokidar');
 const webpack = require('webpack');
 const MemoryFS = require('memory-fs');
 const VueServerRenderer = require('vue-server-renderer');
-const { autoDetectJsEntry } = global.common;
 
 const memFs = new MemoryFS();
 const CHARSET = 'utf-8';
@@ -129,16 +128,9 @@ async function setupSSRServer({ host, port, wConfig }) {
     console.log('Server is listen ', `http://${host}:${port}/`);
 }
 
-export default async function (ctx) {
+export async function dev(ctx) {
     const { host, port, solution, filepath } = ctx;
-    const { webpack } = solution || {};
-
-    const wConfig = [];
-    for (let i = 0, l = webpack.length; i < l; i++) {
-        const config = await webpack[i].toConfig();
-        config.entry = autoDetectJsEntry(config.entry);
-        wConfig.push(config);
-    }
+    const { webpack: wConfig } = solution || {};
 
     await setupSSRServer({ host, port, wConfig, solution });
 

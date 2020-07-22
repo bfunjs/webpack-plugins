@@ -1,5 +1,5 @@
-import init from './init';
-import dev from './dev';
+import { init } from './init';
+import { dev } from './dev';
 
 const extensions = ['@bfun/solution-webpack4-standard'];
 

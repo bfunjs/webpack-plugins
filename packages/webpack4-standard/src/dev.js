@@ -15,7 +15,8 @@ async function setupDevServer({ host, port, wConfig, devServer }) {
         item.plugins.push(new webpack.HotModuleReplacementPlugin());
     });
 
-    const compiler = webpack(wConfig[0]);
+    const [ clientConfig = {} ] = webpack || [];
+    const compiler = webpack(clientConfig);
     compiler.apply(new FriendlyErrorsWebpackPlugin());
 
     let hasCompile = false;
@@ -30,15 +31,16 @@ async function setupDevServer({ host, port, wConfig, devServer }) {
         }
     });
 
+    const { output = {}, devServer: clientDevServer = {} } = clientConfig;
     const devServerOption = {
-        publicPath: '/',
+        publicPath: output.publicPath || '/',
         hot: true,
         compress: true,
         disableHostCheck: true,
         quiet: true,
         overlay: false,
         clientLogLevel: 'warning', // "none" | "info" | "warning" | "error"
-        ...(wConfig[0].devServer || {}),
+        ...clientDevServer,
         ...devServer,
     };
     const server = new WebpackDevServer(compiler, devServerOption);
@@ -47,10 +49,10 @@ async function setupDevServer({ host, port, wConfig, devServer }) {
 
 export async function dev(ctx, next, solutionOptions) {
     const { host, port, solution, filepath } = ctx;
-    const { webpack, options } = solution || {};
+    const { webpack: wConfig, options } = solution || {};
     const { devServer = {} } = options;
 
-    await setupDevServer({ host, port, wConfig: webpack, devServer });
+    await setupDevServer({ host, port, wConfig, devServer });
 
     if (filepath) chokidar.watch(filepath).on('change', () => process.send('restart'));
 }
