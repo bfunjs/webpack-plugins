@@ -15,7 +15,7 @@ async function setupDevServer({ host, port, wConfig, devServer }) {
         item.plugins.push(new webpack.HotModuleReplacementPlugin());
     });
 
-    const [ clientConfig = {} ] = webpack || [];
+    const [ clientConfig = {} ] = wConfig || [];
     const compiler = webpack(clientConfig);
     compiler.apply(new FriendlyErrorsWebpackPlugin());
 

@@ -4,6 +4,7 @@ import fonts from './rules/fonts';
 import style from './rules/style';
 import less from './rules/less';
 import template from './rules/template';
+import degrade from './rules/degrade';
 
 const { autoDetectJsEntry } = global.common;
 const path = require('path');
@@ -11,7 +12,7 @@ const WebpackChain = require('webpack-chain');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
 const OptimizeCssAssets = require('optimize-css-assets-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const rules = { assets, babel, fonts, style, less, template };
+const rules = { assets, babel, fonts, style, less, template, degrade };
 
 export async function createWebpackConfig(options, extra = {}) {
     const { filters = [] } = extra;
@@ -72,6 +73,6 @@ export async function init(ctx, next) {
         config.entry = autoDetectJsEntry(config.entry);
         cList.push(config);
     }
-    if (cList.length < 1) console.warn('webpack config is empty');
+    if (cList.length < 1) console.warn('webpack config not found');
     ctx.solution.webpack = cList;
 }
