@@ -30,5 +30,8 @@
     "vue-template-compiler": "2",
     "webpack-chain": "6",
     "webpack-merge": "5"
+  },
+  "peerDependencies": {
+    "@bfun/solution-webpack4-standard": "1"
   }
 }

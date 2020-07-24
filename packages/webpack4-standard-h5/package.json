@@ -18,30 +18,13 @@
   },
   "homepage": "https://github.com/bfunjs/webpack-plugins#readme",
   "dependencies": {
-    "@babel/core": "7",
-    "@babel/preset-env": "7",
-    "@bfun/webpack-configuration": "1",
-    "babel-loader": "8",
-    "clean-webpack-plugin": "3",
-    "css-loader": "3",
-    "file-loader": "4",
-    "friendly-errors-webpack-plugin": "1",
-    "html-webpack-plugin": "3",
-    "less": "3",
-    "less-loader": "5",
-    "mini-css-extract-plugin": "0",
-    "optimize-css-assets-webpack-plugin": "5",
+    "@bfun/solution-webpack4-standard": "1",
     "postcss-loader": "3",
-    "postcss-pxtorem": "4",
-    "terser-webpack-plugin": "3",
-    "url-loader": "2",
-    "webpack": "4",
-    "webpack-dev-server": "^3.11.0",
-    "webpack-merge": "4",
-    "webpack-node-externals": "1"
+    "postcss-pxtorem": "4"
   },
   "peerDependencies": {
-    "@bfun/webpack-configuration": "1",
+    "@bfun/solution-webpack4-standard": "1",
+    "webpack-chain": "*",
     "webpack": "4"
   }
 }
