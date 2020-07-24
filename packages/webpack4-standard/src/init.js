@@ -9,6 +9,7 @@ import degrade from './rules/degrade';
 const { autoDetectJsEntry } = global.common;
 const path = require('path');
 const WebpackChain = require('webpack-chain');
+const { ProgressPlugin } = require('webpack');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
 const OptimizeCssAssets = require('optimize-css-assets-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -42,14 +43,15 @@ export async function createWebpackConfig(options, extra = {}) {
 
     chain.output.path(path.join(process.cwd(), 'dist')).filename('[name].js');
     chain.output.publicPath('/');
+    chain.plugin('progress').use(ProgressPlugin);
     return chain;
 }
 
 export async function init(ctx, next) {
     const { bConfig, solution } = ctx;
     const { options = {} } = solution || {};
-    const { sourceMap } = bConfig;
-    const { clean, wConfig, created } = options;
+    const { sourceMap, configure } = bConfig;
+    const { clean } = options;
     const chain = await createWebpackConfig(options, { sourceMap });
 
     if (clean !== false) {
@@ -59,25 +61,31 @@ export async function init(ctx, next) {
         }, typeof clean === 'object' ? clean : {});
         chain.plugin('clean').use(CleanWebpackPlugin, [ defaultOptions ]);
     }
-    // 我们希望wConfig只影响第一个webpack配置，防止后面的自定义配置受到污染
-    // 如果希望影响每一个webpack配置，可以在created钩子中配置
-    if (wConfig) chain.merge(wConfig);
+    // 我们希望当configure是一个对象时只影响第一个webpack配置，防止后面的配置受到污染
+    // 如果希望影响每一个webpack配置，可以将configure设置为函数
+    if (typeof configure === 'object') chain.merge(configure);
 
     if (!solution.webpack) solution.webpack = [];
     solution.webpack.push(chain);
 
     await next();
 
-    const cList = [];
+    const list = [];
     for (let i = 0, l = solution.webpack.length; i < l; i++) {
         const wChain = solution.webpack[i];
         let status = true;
-        if (typeof created === 'function') status = await created(wChain, i);
+        if (typeof configure === 'function') status = await configure(wChain, i);
         if (status === false) continue;
         const config = await wChain.toConfig();
         config.entry = autoDetectJsEntry(config.entry);
-        cList.push(config);
+        const { output = {}, externals } = config;
+        if (externals && output && output.libraryTarget && output.libraryTarget !== 'umd') {
+            if (typeof externals === 'object' && !(externals instanceof Array)) {
+                delete config.externals;
+            }
+        }
+        list.push(config);
     }
-    if (cList.length < 1) console.warn('webpack config not found');
-    solution.webpack = cList;
+    if (list.length < 1) console.warn('webpack config not found');
+    solution.webpack = list;
 }

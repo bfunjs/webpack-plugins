@@ -1,6 +1,6 @@
 const webpackBuilder = require('webpack');
 
-const { cleanDir, logger } = global.common;
+const { logger } = global.common;
 
 function buildCallback(err, stats) {
     if (err) {
@@ -21,12 +21,7 @@ function buildCallback(err, stats) {
 }
 
 export async function build(ctx, next) {
-    const { webpack, bConfig = {} } = ctx.solution || {};
-    const { clean } = bConfig;
-
-    if (clean && typeof clean === 'string') {
-        await cleanDir(clean);
-    }
+    const { webpack } = ctx.solution || {};
     const compiler = webpackBuilder(webpack);
     await new Promise((resolve) => {
         compiler.run(async (err, stats) => {

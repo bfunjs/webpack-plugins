@@ -1,6 +1,6 @@
 {
   "name": "@bfun/solution-webpack4-standard",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "@bfun/cli solution webpack4 standard",
   "main": "dist/index.js",
   "scripts": {
@@ -41,6 +41,7 @@
     "webpack-node-externals": "1"
   },
   "peerDependencies": {
+    "@bfun/cli": ">=3.0.5",
     "webpack-chain": "*",
     "webpack": "4"
   }

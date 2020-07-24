@@ -2,7 +2,7 @@ const name = 'rem';
 
 export async function init(ctx, next) {
     const { options = {}, webpack } = ctx.solution || {};
-    const { px2rem, rootValue, propList, minPixelValue, ...others } = options.rem || {};
+    const { px2rem, rootValue, propList, minPixelValue, ...others } = options[name] || {};
     let postcssOptions = { plugins: [] };
 
     let defaultOptions = {

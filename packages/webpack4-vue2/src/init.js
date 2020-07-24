@@ -9,7 +9,7 @@ const { autoDetectJsEntry } = global.common;
 const name = 'vue';
 
 function initCommonConfig(chain, options) {
-    const { vue2, style, less } = options;
+    const { vue, style, less } = options;
 
     let defaultOptions = {
         loaders: {
@@ -23,7 +23,7 @@ function initCommonConfig(chain, options) {
             image: 'xlink:href',
         },
     };
-    if (typeof vue2 === 'object') defaultOptions = Object.assign(defaultOptions, vue2);
+    if (typeof vue === 'object') defaultOptions = Object.assign(defaultOptions, vue);
     if (style) defaultOptions.loaders.css.push('css-loader');
     if (less) defaultOptions.loaders.less = [ 'vue-style-loader', 'less-loader' ];
 
@@ -43,7 +43,7 @@ function initClientConfig(chain, options) {
 
     initCommonConfig(chain, options);
     chain.plugin('ssr-client').use(VueSSRClientPlugin, [ { filename } ])
-    chain.plugins.delete('clean');
+    // chain.plugins.delete('clean');
 }
 
 

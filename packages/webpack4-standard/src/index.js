@@ -1,10 +1,5 @@
-import { init, createWebpackConfig } from './init';
-import { dev } from './dev';
-import { build } from './build';
+export { init, createWebpackConfig } from './init';
+export { dev } from './dev';
+export { build } from './build';
 
-export {
-    init,
-    dev,
-    build,
-    createWebpackConfig,
-};
+export const required = [ 'webpack' ];

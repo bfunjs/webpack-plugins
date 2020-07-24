@@ -1,8 +1,3 @@
-import { init } from './init';
+export { init } from './init';
 
-const extensions = ['@bfun/solution-webpack4-standard'];
-
-export {
-    extensions,
-    init,
-};
+export const extensions = [ '@bfun/solution-webpack4-standard' ];
