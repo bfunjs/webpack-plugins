@@ -17,7 +17,9 @@ async function setupDevServer({ host, port, wConfig, devServer }) {
 
     const [ clientConfig = {} ] = wConfig || [];
     const compiler = webpack(clientConfig);
-    compiler.apply(new FriendlyErrorsWebpackPlugin());
+    compiler.apply(new FriendlyErrorsWebpackPlugin({
+        clearConsole: true,
+    }));
 
     let hasCompile = false;
     compiler.plugin('done', stats => {
@@ -38,7 +40,7 @@ async function setupDevServer({ host, port, wConfig, devServer }) {
         compress: true,
         disableHostCheck: true,
         quiet: true,
-        overlay: false,
+        overlay: true,
         clientLogLevel: 'warning', // "none" | "info" | "warning" | "error"
         ...clientDevServer,
         ...devServer,

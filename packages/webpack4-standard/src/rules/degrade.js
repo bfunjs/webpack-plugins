@@ -8,11 +8,11 @@ export default async function (chain, { [name]: options }) {
     const defaultTmplDir = global.configDir || process.cwd();
     const filename = (typeof options === 'string') ? options : 'degrade.html';
     let defaultOptions = {
-        filename: 'index.html',
+        filename: 'degrade.html',
         template: join(defaultTmplDir, filename),
         inject: false,
         minify: {
-            removeComments: true,
+            removeComments: false,
             collapseWhitespace: true,
             removeAttributeQutes: true,
         },

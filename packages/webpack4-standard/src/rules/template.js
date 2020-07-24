@@ -12,7 +12,7 @@ export default async function (chain, { [name]: options }) {
         template: join(defaultTmplDir, filename),
         inject: true,
         minify: {
-            removeComments: true,
+            removeComments: false,
             collapseWhitespace: true,
             removeAttributeQutes: true,
         },

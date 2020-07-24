@@ -1,7 +1,7 @@
 const name = 'rem';
 
 export async function init(ctx, next) {
-    const { options = {} } = ctx.solution || {};
+    const { options = {}, webpack } = ctx.solution || {};
     const { px2rem, rootValue, propList, minPixelValue, ...others } = options.rem || {};
     let postcssOptions = { plugins: [] };
 
@@ -21,7 +21,7 @@ export async function init(ctx, next) {
         postcssOptions = Object.assign(postcssOptions, others);
     }
 
-    const [ chain ] = options.webpack || [];
+    const [ chain ] = webpack || [];
     if (!chain) {
         console.log('webpack config not found');
         process.exit(1);

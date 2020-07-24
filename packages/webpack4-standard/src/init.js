@@ -15,15 +15,18 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const rules = { assets, babel, fonts, style, less, template, degrade };
 
 export async function createWebpackConfig(options, extra = {}) {
-    const { filters = [] } = extra;
+    const { filters = [], sourceMap = false } = extra;
     const chain = new WebpackChain();
 
     if (process.env.NODE_ENV === 'production') {
+        chain.stats('errors-only');
         chain.mode('production');
         chain.optimization.minimize(true)
-        chain.optimization.minimizer('TerserWebpackPlugin').use(TerserWebpackPlugin);
+        if (sourceMap) chain.devtool('source-map');
+        chain.optimization.minimizer('TerserWebpackPlugin').use(TerserWebpackPlugin, [ { sourceMap } ]);
         chain.optimization.minimizer('OptimizeCssAssets').use(OptimizeCssAssets);
     } else {
+        chain.stats('minimal');
         chain.mode('development');
         chain.optimization.minimize(false);
     }
@@ -43,9 +46,11 @@ export async function createWebpackConfig(options, extra = {}) {
 }
 
 export async function init(ctx, next) {
-    const { options = {} } = ctx.solution || {};
+    const { bConfig, solution } = ctx;
+    const { options = {} } = solution || {};
+    const { sourceMap } = bConfig;
     const { clean, wConfig, created } = options;
-    const chain = await createWebpackConfig(options);
+    const chain = await createWebpackConfig(options, { sourceMap });
 
     if (clean !== false) {
         let defaultOptions = Object.assign({
@@ -58,14 +63,14 @@ export async function init(ctx, next) {
     // 如果希望影响每一个webpack配置，可以在created钩子中配置
     if (wConfig) chain.merge(wConfig);
 
-    if (!ctx.solution.webpack) ctx.solution.webpack = [];
-    ctx.solution.webpack.push(chain);
+    if (!solution.webpack) solution.webpack = [];
+    solution.webpack.push(chain);
 
     await next();
 
     const cList = [];
-    for (let i = 0, l = ctx.solution.webpack.length; i < l; i++) {
-        const wChain = ctx.solution.webpack[i];
+    for (let i = 0, l = solution.webpack.length; i < l; i++) {
+        const wChain = solution.webpack[i];
         let status = true;
         if (typeof created === 'function') status = await created(wChain, i);
         if (status === false) continue;
@@ -74,5 +79,5 @@ export async function init(ctx, next) {
         cList.push(config);
     }
     if (cList.length < 1) console.warn('webpack config not found');
-    ctx.solution.webpack = cList;
+    solution.webpack = cList;
 }
