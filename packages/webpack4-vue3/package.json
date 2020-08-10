@@ -20,12 +20,14 @@
   "dependencies": {
     "@bfun/solution-webpack4-standard": "1",
     "@koa/router": "9",
+    "@vue/compiler-sfc": "next",
     "chokidar": "3",
     "koa": "2",
     "koa-webpack": "5",
     "memory-fs": "latest",
     "vue": "next",
     "vue-loader": "next",
+    "vue-router": "next",
     "webpack-chain": "6",
     "webpack-merge": "5"
   },
