@@ -20,7 +20,7 @@
   "dependencies": {
     "@bfun/solution-webpack4-standard": "1",
     "@koa/router": "9",
-    "@vue/compiler-sfc": "next",
+    "@vue/compiler-sfc": "latest",
     "chokidar": "3",
     "koa": "2",
     "koa-webpack": "5",
