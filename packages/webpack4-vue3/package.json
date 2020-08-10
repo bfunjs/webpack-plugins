@@ -1,7 +1,7 @@
 {
-  "name": "@bfun/solution-webpack4-vue2",
-  "version": "1.0.2",
-  "description": "@bfun/cli solution webpack4 & vue2",
+  "name": "@bfun/solution-webpack4-vue3",
+  "version": "0.0.1",
+  "description": "@bfun/cli solution webpack4 & vue3",
   "main": "dist/index.js",
   "scripts": {
     "release": "npm publish --access=public",
@@ -24,15 +24,13 @@
     "koa": "2",
     "koa-webpack": "5",
     "memory-fs": "latest",
-    "vue": "2",
-    "vue-loader": "*",
-    "vue-server-renderer": "2",
-    "vue-template-compiler": "2",
+    "vue": "next",
+    "vue-loader": "next",
     "webpack-chain": "6",
     "webpack-merge": "5"
   },
   "peerDependencies": {
-    "@bfun/cli": ">=3.0.5",
+    "@bfun/cli": ">=3.0.6",
     "@bfun/solution-webpack4-standard": "1"
   }
 }

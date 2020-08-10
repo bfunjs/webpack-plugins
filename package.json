@@ -6,7 +6,8 @@
   "scripts": {
     "build:webpack4-standard": "rollup -c --environment TARGET:webpack4-standard",
     "build:webpack4-standard-h5": "rollup -c --environment TARGET:webpack4-standard-h5",
-    "build:webpack4-vue2": "rollup -c --environment TARGET:webpack4-vue2"
+    "build:webpack4-vue2": "rollup -c --environment TARGET:webpack4-vue2",
+    "build:webpack4-vue3": "rollup -c --environment TARGET:webpack4-vue3"
   },
   "repository": {
     "type": "git",
